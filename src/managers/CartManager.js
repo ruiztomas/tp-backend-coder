@@ -31,7 +31,7 @@ const cartManager={
             const cart=carts.find(c=> c.id==cid);
             if(!cart) return callback(null);
             const exist=cart.products.find(p=> p.product==pid);
-            if(existe) existe.quantity+=1;
+            if(exist) exist.quantity+=1;
             else cart.products.push({product: pid, quantity: 1});
             saveCarts(carts, ()=> callback(cart));
         });
