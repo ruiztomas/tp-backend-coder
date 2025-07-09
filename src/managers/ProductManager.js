@@ -1,8 +1,9 @@
 const fs = require('fs');
-const path = './data/products.json';
+const path=require('path');
+const productFile = path.join(__dirname, '..','..','data','products.json');
 
 const getProducts = callback => {
-  fs.readFile(path, 'utf-8', (err, data) => {
+  fs.readFile(productFile, 'utf-8', (err, data) => {
     if (err) return callback([]);
     try {
       const products = JSON.parse(data);
@@ -14,14 +15,21 @@ const getProducts = callback => {
 };
 
 const saveProducts = (products, callback) => {
-  fs.writeFile(path, JSON.stringify(products, null, 2), callback);
+  fs.writeFile(productFile, JSON.stringify(products, null, 2), (err)=>{
+    if(err){
+      console.error("Error al escribir el archivo:", err);
+    } else {
+      console.log("Archivo guardado correctamente.");
+    }
+    callback();
+  });
 };
 
 const productManager = {
   getAll: () => {
     try {
-      if (!fs.existsSync(path)) fs.writeFileSync(path, '[]');
-      const data = fs.readFileSync(path, 'utf-8');
+      if (!fs.existsSync(productFile)) fs.writeFileSync(productFile, '[]');
+      const data = fs.readFileSync(productFile, 'utf-8');
       return JSON.parse(data);
     } catch {
       return [];
@@ -37,7 +45,11 @@ const productManager = {
     getProducts(products => {
       const newProduct = { id: Date.now().toString(), ...data };
       products.push(newProduct);
-      saveProducts(products, () => callback(newProduct));
+      console.log("Productos antes de guardar:", products);
+      saveProducts(products, () =>{
+        console.log("Producto guardado:", newProduct);
+        callback(newProduct);
+      });
     });
   },
   update: (id, updates, callback) => {
