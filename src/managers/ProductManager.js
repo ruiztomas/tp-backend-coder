@@ -27,45 +27,44 @@ const saveProducts = (products, callback) => {
 };
 
 const productManager = {
-  getAll: () => {
-    try {
-      if (!fs.existsSync(productFile)) fs.writeFileSync(productFile, '[]');
-      const data = fs.readFileSync(productFile, 'utf-8');
-      return JSON.parse(data);
-    } catch {
-      return [];
+  getAll: async(options) => {
+    const {limit=10, page=1,sort,query}=options;
+
+    let filter={};
+    if(query){
+      if(query.category) filter.category=query.category;
+      if(query.available !== undefined) filter.available=query.available;
     }
-  },
-  getById: (id, callback) => {
-    getProducts(products => {
-      const found = products.find(p => p.id == id);
-      callback(found);
+    let sortOption={};
+    if (sort==='asc')sortOption.price=1;
+    else if(sort==='desc')sortOption.price=-1;
+
+    const result=await Product.paginate(filter, {
+      limit,
+      page,
+      sort: sortOption,
+      lean: true
     });
+    
+    return result;
   },
-  add: (data, callback) => {
-    getProducts(products => {
-      const newProduct = { id: Date.now().toString(), ...data };
-      products.push(newProduct);
-      console.log("Productos antes de guardar:", products);
-      saveProducts(products, () =>{
-        console.log("Producto guardado:", newProduct);
-        callback(newProduct);
-      });
-    });
+
+  getById: async(id)=>{
+    return Product.findById(id).lean();
   },
-  update: (id, updates, callback) => {
-    getProducts(products => {
-      const index = products.findIndex(p => p.id == id);
-      if (index === -1) return callback(null);
-      products[index] = { ...products[index], ...updates, id: products[index].id };
-      saveProducts(products, () => callback(products[index]));
-    });
+
+  add: async(data)=>{
+    const newProduct=new Product(data);
+    await newProduct.save();
+    return newProduct.toObject();
   },
-  delete: (id, callback) => {
-    getProducts(products => {
-      const filtered = products.filter(p => p.id != id);
-      saveProducts(filtered, () => callback());
-    });
+
+  update: async(id, updates)=>{
+    return Product.findByIdAndUpdate(id, updates, {new: true}).lean();
+  },
+
+  delete: async(id)=>{
+    await Product.findByIdAndDelete(id);
   }
 };
 

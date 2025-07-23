@@ -13,6 +13,13 @@ const app=express();
 const server=http.createServer(app);
 const io= new Server(server);
 
+require('dotenv').config();
+const mongoose=require('mongoose');
+
+mongoose.connect(process.env,MONGO_URI)
+    .then(()=>console.log('Conectado a MongoDB'))
+    .catch(err=>console.error('Error al conectar a MongoDB:',err));
+
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));

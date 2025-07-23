@@ -2,15 +2,15 @@ const express=require('express');
 const router=express.Router();
 const cartManager=require('../managers/CartManager');
 
-router.post('/', (req,res)=>{
-    cartManager.create(nuevo=> res.status(201).json(nuevo));
+router.post('/', async(req,res)=>{
+    const newCArt=await cartManager.create();
+    res.status(201).json(newCart);
 });
 
-router.get('/:cid', (req,res)=>{
-    cartManager.getById(req.params.cid, cart=>{
-        if(!cart) return res.status(404).send('Carrito no encontrado');
-        res.json(cart.products);
-    });
+router.get('/:cid', async(req,res)=>{
+    const cart=await cartManager.getById(req.params.cid);
+    if(!cart)return res.status(404).json({error: 'Carrito no encontrado'});
+    res.json(cart.products);
 });
 
 router.post('/:cid/product/:pid', (req,res)=>{
