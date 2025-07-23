@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path=require('path');
 const productFile = path.join(__dirname, '..','..','data','products.json');
+const Product=require('../models/Products');
 
 const getProducts = callback => {
   fs.readFile(productFile, 'utf-8', (err, data) => {
