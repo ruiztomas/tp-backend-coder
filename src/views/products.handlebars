@@ -1,0 +1,24 @@
+<h1>Productos</h1>
+
+<form method="GET" action="/products">
+    <input type="text" name="query" placeholder="Filtro: category:Soquete" value="{{query}}" />
+    <select name="sort">
+        <option value="">Ordenar</option>
+        <option value="asc" {{#if (eq sort "asc")}}selected{{/if}}>Precio Asc</option>
+        <option value="desc" {{#if (eq sort "desc")}}selected{{/if}}>Precio Desc</option>
+    </select>
+    <button type="submit">Buscar</button>
+</form>
+
+<ul>
+    {{#each products}}
+        <li>
+            <a href="/products/{{this._id}}">{{this.title}}</a> - ${{this.price}}
+            <form style="display:inline" method="POST" action="/api/carts{{../cartId}}/product/{{this._id}}">
+                <button type="submit">Agregar al carrito</button>
+            </form>
+        </li>
+    {{/each}}
+</ul>
+
+<div
