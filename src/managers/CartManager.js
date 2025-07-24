@@ -1,17 +1,4 @@
-const fs=require('fs');
-const path='./data/carts.json';
 const Cart=require('../models/Cart');
-
-const getCarts=callback=>{
-    fs.readFile(path, 'utf8', (err, data)=>{
-        const carts=err?[]:JSON.parse(data);
-        callback(carts);
-    });
-};
-
-const saveCarts=(carts, callback)=>{
-    fs.writeFile(path, JSON.stringify(carts, null, 2), callback);
-};
 
 const cartManager={
     create: async()=>{

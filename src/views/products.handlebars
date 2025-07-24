@@ -14,11 +14,18 @@
     {{#each products}}
         <li>
             <a href="/products/{{this._id}}">{{this.title}}</a> - ${{this.price}}
-            <form style="display:inline" method="POST" action="/api/carts{{../cartId}}/product/{{this._id}}">
+            <form style="display:inline" method="POST" action="/api/carts/{{../cartId}}/product/{{this._id}}">
                 <button type="submit">Agregar al carrito</button>
             </form>
         </li>
     {{/each}}
 </ul>
 
-<div
+<div>
+    {{#if hasPrevPage}}
+        <a href="/products?page={{prevPage}}&limit={{limit}}&query={{query}}&sort={{sort}}">Anterior</a>
+    {{/if}}
+    <span>Pagina {{page}} de {{totalPages}}</span>
+    {{#if hasNextPage}}
+        <a href="/products?page={{nextPage}}&limit={{limit}}&query={{query}}&sort={{sort}}">Siguiente</a>
+</div>

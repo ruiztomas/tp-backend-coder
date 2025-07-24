@@ -1,37 +1,36 @@
 const express=require('express');
 const router=express.Router();
-const productManager=require('../managers/ProductManager');
-const cartManager=require('../managers/CartManager');
+const Product=require('../models/Products');
+const Cart=require('../models/Cart');
 
 router.get('/products',async(req,res)=>{
     try{
-        const{limit,page,sort,query}=req.query;
+        const limit=parseInt(req.query.limit)||10;
+        const page=parseInt(req.query.page)||1;
+        const sort=req.query.sort;
+        const query=req.query.query;
 
         let=filter={};
         if(query){
-            const parts=query.split(':');
-            if(parts.length===2)filter[parts[0]]=parts[1];
+            if(query==='true'||query==='false')filter.status=query==='true';
+            else filter.category=query;
         }
-        const options={
-            limit:limit?parseInt(limit):10,
-            page:page?parseInt(page):1,
-            sort,
-            query:filter
-        };
-        const result=await productManager.getAll(options);
         
-        res.render('products',{
-            products: result.docs,
-            page: result.page,
-            totalPages: result.totalPages,
-            hasPrevPage: result.hasPrevPage,
-            hasNextPage: result.hasNextPage,
-            prevPage: result.prevPage,
-            nextPage: result.nextPage,
-            query: req.query.query || '',
-            sort: req.query.sort || '',
-            limit: options.limit,
-        });
+        let sortOption={};
+        if(sort==='asc')sortOption.price=1;
+        else if(sort==='desc')sortOption.price=-1;
+
+        const totalDocs=await Product.countDocuments(filter);
+        const totalPages=Math.ceil(totalDocs/limit);
+        const skip=(page-1)*limit;
+
+        const products=await Product.find(fiter)
+            .sort(sortOption)
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
+        res.render('products',{products, page, totalPages, cartId});
     } catch(error){
         res.status(500).send('Error al cargar productos');
     }
@@ -39,8 +38,8 @@ router.get('/products',async(req,res)=>{
 
 router.get('/products/:pid', async(req,res)=>{
     try{
-        const product=await productManager.getById(req.params.pid);
-        if(!product)return res.status(404).send('Producto no encontrado');
+        const product=await Product.findById(req.params.pid).lean();
+        if(!product)return res.status(404).render('error',{message: 'Producto no encontrado'});
         res.render('productDetail',{product});
     }catch(error){
         res.status(500).send('Error al cargar producto');
@@ -49,9 +48,9 @@ router.get('/products/:pid', async(req,res)=>{
 
 router.get('/carts/:cid',async(req,res)=>{
     try{
-        const cart=await cartManager.getById(req.params.cid);
-        if(!cart)return res.status(404).send('Carrito no encontrado');
-        res.render('cart',{products: cart.products, cartId: req.params.cid});
+        const cart=await Cart.findById(req.params.cid).populate('products.product').lean();
+        if(!cart)return res.status(404).render('error',{message:'Carrito no encontrado'});
+        res.render('cartDetail',{cart});
     }catch(error){
         res.status(500).send('Error al cargar carrito');
     }
