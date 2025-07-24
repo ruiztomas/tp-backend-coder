@@ -1,7 +1,16 @@
 const express=require('express');
 const router=express.Router();
-const Product=require('../models/Products');
+const Product=require('../models/Product');
 const Cart=require('../models/Cart');
+
+router.get('/',async(req,res)=>{
+    try{
+        const products=await Product.find().lean();
+        res.render('home',{products});
+    }catch(error){
+        res.status(500).send('Error al cargar la pagina principal');
+    }
+});
 
 router.get('/products',async(req,res)=>{
     try{
@@ -24,13 +33,13 @@ router.get('/products',async(req,res)=>{
         const totalPages=Math.ceil(totalDocs/limit);
         const skip=(page-1)*limit;
 
-        const products=await Product.find(fiter)
+        const products=await Product.find(filter)
             .sort(sortOption)
             .skip(skip)
             .limit(limit)
             .lean();
 
-        res.render('products',{products, page, totalPages, cartId});
+        res.render('products',{products, page, totalPages});
     } catch(error){
         res.status(500).send('Error al cargar productos');
     }

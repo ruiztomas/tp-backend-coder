@@ -4,7 +4,7 @@ const cartManager=require('../managers/CartManager');
 
 router.post('/', async(req,res)=>{
     try{
-        const newCArt=await cartManager.create();
+        const newCart=await cartManager.create();
         res.status(201).json(newCart);
     }catch{
         res.status(500).json({status:'error',message:'Error creando carrito'});
@@ -46,7 +46,7 @@ router.put('/:cid', async(req,res)=>{
 router.put('/:cid/products/:pid', async(req,res)=>{
     try{
         const quantity=req.body.quantity;
-        const cart=await cartManager.updateQuantity(req.params.cid, req.params.pid, queantity);
+        const cart=await cartManager.updateProductQuantity(req.params.cid, req.params.pid, queantity);
         if(!cart) return res.status(404).json({status:'error', message:'Carrito o producto no encontrado'});
         res.json(cart);
     }catch{

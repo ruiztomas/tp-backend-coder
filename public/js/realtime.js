@@ -6,11 +6,14 @@ const productList=document.getElementById('productList');
 productForm.addEventListener('submit', (e)=>{
     e.preventDefault();
     
-    const title=document.getElementById('title').value;
-    const price=document.getElementById('price').value;
-
-    socket.emit("addProduct", {title, price});
-
+    const newProduct={
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        price: parseFloat(document.getElementById('price').value),
+        category: document.getElementById('category').value,
+        stock: parseInt(document.getElementById('stock').value)
+    };
+    socket.emit("addProduct", newProduct);
     productForm.reset();
 });
 
