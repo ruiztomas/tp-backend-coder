@@ -50,10 +50,28 @@ router.get('/:pid', async(req, res) => {
 
 router.post('/', async(req, res) => {
   try{
-    const newProduct=await productManager.add(req.body);
-    res.status(201).json(newProduct);
-  }catch{
-    res.status(500).json({status:'error', message:'Error guardando producto'});
+    const data=req.body;
+    if(Array.isArray(data)){
+      const result=await productManager.addMany(data);
+      res.status(201).json({
+        status: 'success',
+        message: `${result.length} productos agregados`,
+        products: result
+      });
+    }else{
+      const newProduct=await productManager.add(req.body);
+      res.status(201).json({
+        status:'success',
+        product: newProduct
+      });
+    }
+  }catch(error){
+    console.error('Error guardando producto:',error);
+    res.status(500).json({
+      status:'error', 
+      message:'Error guardando producto',
+      error: error.message
+    });
   }
 });
 

@@ -33,6 +33,11 @@ const productManager = {
     return newProduct.toObject();
   },
 
+  addMany: async(productsArray)=>{
+    const result=await Product.insertMany(productsArray);
+    return result;
+  },
+  
   update: async(id, updates)=>{
     return Product.findByIdAndUpdate(id, updates, {new: true}).lean();
   },
