@@ -21,8 +21,11 @@ router.get('/products',async(req,res)=>{
 
         let=filter={};
         if(query){
-            if(query==='true'||query==='false')filter.status=query==='true';
-            else filter.category=query;
+            if(query==='true'||query==='false'){
+                filter.status=query==='true';
+            }else{
+                filter.category=query;
+            }
         }
         
         let sortOption={};
@@ -39,9 +42,26 @@ router.get('/products',async(req,res)=>{
             .limit(limit)
             .lean();
 
-        res.render('products',{products, page, totalPages});
+        const hasPrevPage=page>1;
+        const hasNextPage=page<totalPages;
+        const prevPage=hasPrevPage?page-1:null;
+        const nextPage=hasNextPage?page+1:null;
+
+        res.render('products',{
+            products, 
+            page, 
+            totalPages,
+            hasPrevPage,
+            hasNextPage,
+            prevPage,
+            nextPage,
+            limit,
+            query,
+            sort
+        });
     } catch(error){
-        res.status(500).send('Error al cargar productos');
+        console.error('Error en /products:', error);
+        res.status(500).send('Error al cargar productos',+ error.message);
     }
 });
 

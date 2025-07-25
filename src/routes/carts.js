@@ -46,7 +46,7 @@ router.put('/:cid', async(req,res)=>{
 router.put('/:cid/products/:pid', async(req,res)=>{
     try{
         const quantity=req.body.quantity;
-        const cart=await cartManager.updateProductQuantity(req.params.cid, req.params.pid, queantity);
+        const cart=await cartManager.updateProductQuantity(req.params.cid, req.params.pid, quantity);
         if(!cart) return res.status(404).json({status:'error', message:'Carrito o producto no encontrado'});
         res.json(cart);
     }catch{
