@@ -79,10 +79,32 @@ router.get('/carts/:cid',async(req,res)=>{
     try{
         const cart=await Cart.findById(req.params.cid).populate('products.product').lean();
         if(!cart)return res.status(404).render('error',{message:'Carrito no encontrado'});
-        res.render('cartDetail',{cart});
+        res.render('cart',{
+            cartId: cart._id.toString(),
+            products: cart.products
+        });
     }catch(error){
         res.status(500).send('Error al cargar carrito');
     }
+});
+
+router.get('/cart',async(req, res)=>{
+  try{
+    const cartId=req.query.cartId;
+    if(!cartId){
+      return res.status(400).send('No se encontro el carrito');
+    }
+    const cart=await Cart.findById(cartId).populate('products.product').lean();
+    if(!cart){
+      return res.status(404).render('error',{message:'Carrito no encontrado'});
+    }
+    res.render('cart',{ 
+        cartId: cart._id.toString(),
+        products: cart.products
+     });
+  }catch(error){
+    res.status(500).send('Error al cargar carrito');
+  }
 });
 
 module.exports=router;

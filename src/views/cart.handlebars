@@ -1,19 +1,27 @@
-<h1>Carrito {{cartId}}</h1>
+<h1>Carrito de Compras</h1>
 
-<ul>
-    {{#each products}}
-        <li>
-            {{this.product.title}} - Cantidad: {{this.quantity}} - Precio unit: ${{this.product.price}}
-            <form method="POST" action="/api/carts/{{../cartId}}/products/{{this.product._id}}?_method=PUT">
-                <input type="number" name="quantity" value="{{this.quantity}}" min="1" />
-                <button type="submit">Actualizar cantidad</button>
-            </form>
-        </li>
-    {{/each}}
-</ul>
+{{#if products.length}}
+    <ul>
+        {{#each products}}
+            <li>
+                {{this.product.title}} - Cantidad: {{this.quantity}} - Precio unit: ${{this.product.price}}
+                <form method="POST" action="/api/carts/{{../cartId}}/products/{{this.product._id}}?_method=PUT">
+                    <input type="number" name="quantity" value="{{this.quantity}}" min="1" />
+                    <button type="submit">Actualizar cantidad</button>
+                </form>
+            </li>
+        {{/each}}
+    </ul>
 
-<form method="POST" action="/api/carts/{{cartId}}?_method=DELETE">
-    <button type="submit">Vaciar carrito</button>
-</form>
+    <form method="POST" action="/api/carts/{{cartId}}?_method=DELETE" onsubmit="return handleVaciar(event)">
+        <button type="submit">Vaciar carrito</button>
+    </form>
+{{else}}
+    <p>EL carrito esta vacio</p>
+{{/if}}
 
-<a href="/products">Seguir comprando</a>
+<a href="/products">
+    <button>Seguir comprando</button>
+</a>
+
+<script href="/js/cartHandler.js"></script>

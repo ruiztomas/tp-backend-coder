@@ -1,11 +1,11 @@
 <h1>{{product.title}}</h1>
 <p>Precio: ${{product.price}}</p>
-<p>Categoria: ${{product.category}}</p>
-<p>Descripcion: ${{product.description}}</p>
-<p>Stock: ${{product.stock}}</p>
+<p>Categoria: {{product.category}}</p>
+<p>Descripcion: {{product.description}}</p>
+<p>Stock: {{product.stock}}</p>
 
-<form method="POST" action="/api/carts/{{cartId}}/product/{{product._id}}">
-    <button type="submit">Agregar al carrito</button>
-</form>
+<button onclick="agregarProductoAlCarrito('{{product._id}}')">Agregar al carrito</button>
 
-<a href="/products">Volver a productos</a>
+<a href="/products">
+    <button>Volver a productos</button>
+</a>

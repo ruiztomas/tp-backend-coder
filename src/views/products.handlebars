@@ -1,7 +1,7 @@
 <h1>Productos</h1>
 
 <form method="GET" action="/products">
-    <input type="text" name="query" placeholder="Filtro: category:Soquete" value="{{query}}" />
+    <input type="text" name="query" placeholder="Escribe aqui..." value="{{query}}" />
     <select name="sort">
         <option value="">Ordenar</option>
         <option value="asc" {{#if (eq sort "asc")}}selected{{/if}}>Precio Asc</option>
@@ -14,7 +14,7 @@
     {{#each products}}
         <li>
             <a href="/products/{{this._id}}">{{this.title}}</a> - ${{this.price}}
-            <buton onclick="agregarProductoAlCarrito('{{this._id}}')">Agregar al carrito</buton>
+            <button onclick="agregarProductoAlCarrito('{{this._id}}')">Agregar al carrito</buton>
         </li>
     {{/each}}
 </ul>
@@ -28,5 +28,8 @@
         <a href="/products?page={{nextPage}}&limit={{limit}}&query={{query}}&sort={{sort}}">Siguiente</a>
     {{/if}}
 </div>
+
+<button onclick="verCarrito()">Ver carrito</button>
+
 
 <script src="/js/cartHandler.js"></script>

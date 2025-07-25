@@ -48,7 +48,7 @@ router.put('/:cid/products/:pid', async(req,res)=>{
         const quantity=req.body.quantity;
         const cart=await cartManager.updateProductQuantity(req.params.cid, req.params.pid, quantity);
         if(!cart) return res.status(404).json({status:'error', message:'Carrito o producto no encontrado'});
-        res.json(cart);
+        res.redirect(`/carts/${req.params.cid}`);
     }catch{
         res.status(500).json({status:'error',message:'Error actualizando cantidad'});
     }
@@ -66,10 +66,11 @@ router.delete('/:cid/products/:pid', async(req,res)=>{
 
 router.delete('/:cid', async(req,res)=>{
     try{
-        const cart=await cartManager.emptyCart(req.params.cid);
+        const cart=await cartManager.clearCart(req.params.cid);
         if(!cart)return res.status(404).json({status:'error',message:'Carrito no encontrado'});
-        res.json(cart);
-    }catch{
+        res.redirect(`/carts/${req.params.cid}`);
+    }catch(error){
+        console.error('Error vaciando carrito:', error);
         res.status(500).json({status:'error',message:'Error vaciando carrito'});
     }
 });

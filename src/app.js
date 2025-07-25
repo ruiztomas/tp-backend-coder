@@ -1,7 +1,9 @@
 const express=require("express");
+const cookieParser=require('cookie-parser');
 const http=require("http");
 const {Server}=require("socket.io");
 const path=require("path");
+const methodOverride=require('method-override');
 
 const productsRouter=require("./routes/products.js");
 const cartsRouter=require("./routes/carts.js");
@@ -27,6 +29,9 @@ const hbs=exphbs.create({
 app.engine('handlebars', hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
+
+app.use(methodOverride('_method'));
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
